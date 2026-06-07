@@ -40,8 +40,10 @@ export const POST = handler(async (req: Request, ctx: Ctx) => {
   const warnings: CoherenceWarning[] = [];
 
   // --- Deterministic checks ---------------------------------------------
-  const globalModels = new Set(
-    (plan.plan_summary?.globalDataModels ?? []).map((m) => m.name.toLowerCase()),
+  const summaryModels: { name: string }[] =
+    plan.plan_summary?.globalDataModels ?? [];
+  const globalModels = new Set<string>(
+    summaryModels.map((m) => m.name.toLowerCase()),
   );
 
   for (const edge of deps ?? []) {

@@ -59,7 +59,10 @@ export const POST = handler(async (req: Request, ctx: Ctx) => {
           targetFramework: plan.target_framework,
         },
         route,
-        siblings ?? [],
+        (siblings ?? []).map((s) => ({
+          title: s.title,
+          routePath: s.route_path ?? null,
+        })),
       ),
       { temperature: 0.4, maxTokens: 6000 },
     );
