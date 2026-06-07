@@ -1,0 +1,44 @@
+{
+  "product": "Frontend Project Planner",
+  "candidate": "Taimoor Shaukat",
+  "oneLiner": "Turn a vague product brief into a navigable, editable, drillable atomic frontend plan tree.",
+  "stack": {
+    "framework": "Next.js 16 (App Router, Turbopack)",
+    "language": "TypeScript (strict)",
+    "ui": "shadcn/ui (@base-ui) + Tailwind v4",
+    "architecture": "atomic (atoms/molecules/organisms/templates)",
+    "db": "Supabase Postgres",
+    "auth": "Supabase Auth, Google OAuth only",
+    "security": "RLS enforced, no client service-role",
+    "llm": { "provider": "groq", "model": "llama-3.3-70b-versatile", "compat": "openai", "location": "server-only" },
+    "deploy": "Vercel"
+  },
+  "routes": {
+    "marketing": "/",
+    "dashboard": "/dashboard",
+    "planner": "/plans/[planId]",
+    "share": "/share/[token]",
+    "authCallback": "/auth/callback"
+  },
+  "api": [
+    { "method": "POST", "path": "/api/plans/generate", "auth": true, "op": "generate route tree" },
+    { "method": "POST", "path": "/api/nodes/[nodeId]/expand", "auth": true, "op": "lazy expand node" },
+    { "method": "POST", "path": "/api/nodes/[nodeId]/regenerate", "auth": true, "op": "regenerate node + change report" },
+    { "method": "PATCH", "path": "/api/nodes/[nodeId]", "auth": true, "op": "edit/accept/reject" },
+    { "method": "DELETE", "path": "/api/nodes/[nodeId]", "auth": true, "op": "delete + flag dependents stale" },
+    { "method": "POST", "path": "/api/plans/[planId]/coherence-check", "auth": true, "op": "deterministic + LLM coherence" },
+    { "method": "GET", "path": "/api/plans/[planId]/export/json", "auth": true },
+    { "method": "GET", "path": "/api/plans/[planId]/export/markdown", "auth": true },
+    { "method": "GET", "path": "/api/plans/[planId]/agent-prompt", "auth": true },
+    { "method": "POST|GET|DELETE", "path": "/api/plans/[planId]/share", "auth": true },
+    { "method": "DELETE", "path": "/api/plans/[planId]", "auth": true }
+  ],
+  "database": {
+    "tables": ["profiles", "plans", "plan_nodes", "node_dependencies", "plan_versions", "llm_events", "share_links"],
+    "rls": "all tables, owner_id = auth.uid()",
+    "publicShare": "get_shared_plan(token) SECURITY DEFINER"
+  },
+  "nodeStatuses": ["draft", "accepted", "rejected", "needs_review", "stale_dependency", "regenerated", "edited"],
+  "stretchShipped": ["versioned plans", "markdown export", "json export", "agent scaffold prompt", "read-only share links", "usage/cost dashboard"],
+  "deferred": ["undo/redo", "plan comparison", "zip scaffold", "per-component child nodes", "vue/react idiom variants", "rate limiting"]
+}
