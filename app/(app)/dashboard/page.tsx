@@ -12,36 +12,51 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  const [{ data: plans }, { data: nodes }, { data: events }] = await Promise.all([
-    supabase.from("plans").select("*").order("updated_at", { ascending: false }),
-    supabase.from("plan_nodes").select("plan_id"),
-    supabase
-      .from("llm_events")
-      .select("input_tokens, output_tokens, cost_estimate, latency_ms"),
-  ]);
+  // Defensive: a transient query failure should degrade gracefully, never crash
+  // the whole dashboard.
+  type Row = Record<string, unknown>;
+  let plans: Row[] = [];
+  let nodes: Row[] = [];
+  let events: Row[] = [];
+  try {
+    const [p, n, e] = await Promise.all([
+      supabase.from("plans").select("*").order("updated_at", { ascending: false }),
+      supabase.from("plan_nodes").select("plan_id"),
+      supabase
+        .from("llm_events")
+        .select("input_tokens, output_tokens, cost_estimate, latency_ms"),
+    ]);
+    plans = (p.data as Row[]) ?? [];
+    nodes = (n.data as Row[]) ?? [];
+    events = (e.data as Row[]) ?? [];
+  } catch (err) {
+    console.error("[dashboard] load failed", err);
+  }
 
   const counts = new Map<string, number>();
-  for (const n of nodes ?? [])
-    counts.set(n.plan_id, (counts.get(n.plan_id) ?? 0) + 1);
+  for (const n of nodes) {
+    const pid = String(n.plan_id ?? "");
+    counts.set(pid, (counts.get(pid) ?? 0) + 1);
+  }
 
-  const cards: PlanCard[] = (plans ?? []).map((p) => ({
-    id: p.id,
-    title: p.title,
-    brief: p.brief,
-    target_framework: p.target_framework,
-    status: p.status,
-    updated_at: p.updated_at,
-    nodeCount: counts.get(p.id) ?? 0,
+  const cards: PlanCard[] = plans.map((p) => ({
+    id: String(p.id),
+    title: String(p.title ?? "Untitled"),
+    brief: String(p.brief ?? ""),
+    target_framework: String(p.target_framework ?? "nextjs"),
+    status: String(p.status ?? "draft"),
+    updated_at: String(p.updated_at ?? new Date().toISOString()),
+    nodeCount: counts.get(String(p.id)) ?? 0,
   }));
 
-  const ev = events ?? [];
+  const num = (v: unknown) => (typeof v === "number" ? v : Number(v ?? 0)) || 0;
   const totals: UsageTotals = {
-    calls: ev.length,
-    inputTokens: ev.reduce((s, e) => s + (e.input_tokens ?? 0), 0),
-    outputTokens: ev.reduce((s, e) => s + (e.output_tokens ?? 0), 0),
-    cost: ev.reduce((s, e) => s + Number(e.cost_estimate ?? 0), 0),
-    avgLatencyMs: ev.length
-      ? ev.reduce((s, e) => s + (e.latency_ms ?? 0), 0) / ev.length
+    calls: events.length,
+    inputTokens: events.reduce((s, e) => s + num(e.input_tokens), 0),
+    outputTokens: events.reduce((s, e) => s + num(e.output_tokens), 0),
+    cost: events.reduce((s, e) => s + num(e.cost_estimate), 0),
+    avgLatencyMs: events.length
+      ? events.reduce((s, e) => s + num(e.latency_ms), 0) / events.length
       : 0,
   };
 

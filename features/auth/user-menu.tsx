@@ -1,6 +1,5 @@
 "use client";
 
-import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -10,8 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, LayoutDashboard, Loader2 } from "lucide-react";
-import { signOut } from "./actions";
+import { LogOut, LayoutDashboard } from "lucide-react";
 
 /**
  * Avatar dropdown. Client component using plain onClick items (the base-ui menu
@@ -28,7 +26,6 @@ export function UserMenu({
   avatarUrl?: string | null;
 }) {
   const router = useRouter();
-  const [pending, start] = useTransition();
   const initial = (name || email || "?").charAt(0).toUpperCase();
 
   return (
@@ -53,16 +50,8 @@ export function UserMenu({
           <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          disabled={pending}
-          onClick={() => start(() => void signOut())}
-        >
-          {pending ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <LogOut className="mr-2 h-4 w-4" />
-          )}
-          Sign out
+        <DropdownMenuItem onClick={() => router.push("/auth/signout")}>
+          <LogOut className="mr-2 h-4 w-4" /> Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
