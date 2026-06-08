@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -21,9 +22,10 @@ export default function AppError({
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button onClick={reset}>Try again</Button>
-        <Button variant="outline" render={<a href="/dashboard" />}>
+        <Button variant="outline" render={<Link href="/dashboard" />}>
           Dashboard
         </Button>
+        {/* Route handler (not a page) — plain <a> for a real GET that signs out. */}
         <Button variant="ghost" render={<a href="/auth/signout" />}>
           Log out
         </Button>

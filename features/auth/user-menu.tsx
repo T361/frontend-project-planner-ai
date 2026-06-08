@@ -5,16 +5,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, LayoutDashboard } from "lucide-react";
 
 /**
- * Avatar dropdown. Client component using plain onClick items (the base-ui menu
- * doesn't accept a <form>/<Link> wrapper as a direct child); sign-out invokes the
- * server action inside a transition.
+ * Avatar dropdown. Uses plain onClick items + a plain <div> header (NOT
+ * DropdownMenuLabel — that is base-ui Menu.GroupLabel and throws unless wrapped
+ * in a Menu.Group; the header is purely display text so a div is correct).
  */
 export function UserMenu({
   email,
@@ -39,12 +38,12 @@ export function UserMenu({
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="truncate">
+        <div className="truncate px-2 py-1.5 text-sm font-medium">
           {name || "Signed in"}
           <span className="block truncate text-xs font-normal text-muted-foreground">
             {email}
           </span>
-        </DropdownMenuLabel>
+        </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/dashboard")}>
           <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard

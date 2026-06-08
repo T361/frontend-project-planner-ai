@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function Error({
@@ -16,10 +17,10 @@ export default function Error({
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button onClick={reset}>Try again</Button>
-        {/* Full navigations so they work even if client state is broken. */}
-        <Button variant="outline" render={<a href="/" />}>
+        <Button variant="outline" render={<Link href="/" />}>
           Home
         </Button>
+        {/* Route handler (not a page) — plain <a> for a real GET that signs out. */}
         <Button variant="ghost" render={<a href="/auth/signout" />}>
           Log out
         </Button>
