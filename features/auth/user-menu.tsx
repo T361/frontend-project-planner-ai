@@ -1,4 +1,7 @@
-import { signOut } from "./actions";
+"use client";
+
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,10 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, LayoutDashboard } from "lucide-react";
-import Link from "next/link";
+import { LogOut, LayoutDashboard, Loader2 } from "lucide-react";
+import { signOut } from "./actions";
 
-/** Server component: avatar dropdown with sign-out (server action). */
+/**
+ * Avatar dropdown. Client component using plain onClick items (the base-ui menu
+ * doesn't accept a <form>/<Link> wrapper as a direct child); sign-out invokes the
+ * server action inside a transition.
+ */
 export function UserMenu({
   email,
   name,
@@ -20,7 +27,10 @@ export function UserMenu({
   name?: string | null;
   avatarUrl?: string | null;
 }) {
+  const router = useRouter();
+  const [pending, start] = useTransition();
   const initial = (name || email || "?").charAt(0).toUpperCase();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring">
@@ -39,15 +49,21 @@ export function UserMenu({
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem render={<Link href="/dashboard" />}>
+        <DropdownMenuItem onClick={() => router.push("/dashboard")}>
           <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <form action={signOut}>
-          <DropdownMenuItem render={<button type="submit" className="w-full cursor-pointer" />}>
-            <LogOut className="mr-2 h-4 w-4" /> Sign out
-          </DropdownMenuItem>
-        </form>
+        <DropdownMenuItem
+          disabled={pending}
+          onClick={() => start(() => void signOut())}
+        >
+          {pending ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut className="mr-2 h-4 w-4" />
+          )}
+          Sign out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

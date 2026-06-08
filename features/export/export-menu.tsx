@@ -87,14 +87,30 @@ export function ExportMenu({ planId }: { planId: string }) {
       </DropdownMenu>
 
       <Dialog open={!!agentPrompt} onOpenChange={(v) => !v && setAgentPrompt(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="w-full max-w-2xl sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>Agent scaffolding prompt</DialogTitle>
             <DialogDescription>
               Copied to your clipboard — paste into Claude Code or Cursor to scaffold the project.
             </DialogDescription>
           </DialogHeader>
-          <Textarea readOnly value={agentPrompt ?? ""} className="min-h-[50vh] border-white/10 bg-black/40 font-mono text-xs" />
+          <Textarea
+            readOnly
+            value={agentPrompt ?? ""}
+            className="h-[60vh] resize-none overflow-auto border-white/10 bg-black/40 font-mono text-xs leading-relaxed"
+          />
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                navigator.clipboard.writeText(agentPrompt ?? "");
+                toast.success("Copied");
+              }}
+            >
+              Copy again
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
