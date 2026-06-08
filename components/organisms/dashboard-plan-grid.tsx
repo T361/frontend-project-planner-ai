@@ -52,8 +52,9 @@ export function DashboardPlanGrid({ plans }: { plans: PlanCard[] }) {
       {plans.map((p) => (
         <div
           key={p.id}
-          className="group relative flex flex-col rounded-xl border border-white/10 bg-card/60 p-4 transition-colors hover:border-white/20"
+          className="card-glow group relative flex flex-col overflow-hidden rounded-xl border border-white/10 bg-card/60 p-4"
         >
+          <span className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           <div className="flex items-start justify-between gap-2">
             <Link href={`/plans/${p.id}`} className="min-w-0 flex-1">
               <h3 className="truncate font-medium group-hover:text-primary">

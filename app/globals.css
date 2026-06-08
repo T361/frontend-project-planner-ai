@@ -186,8 +186,97 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Gradient text — for hero headlines and key numerals. */
+  .text-gradient {
+    background: linear-gradient(180deg, #ffffff 0%, #cfe0ff 55%, #6ea0ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-blue {
+    background: linear-gradient(120deg, #60a5fa 0%, #818cf8 50%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Animated aurora blobs — cheap (transform/opacity only). */
+  .aurora {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(70px);
+    opacity: 0.5;
+    will-change: transform;
+    pointer-events: none;
+  }
+
+  /* Premium card with gradient hairline border + hover glow. */
+  .card-glow {
+    position: relative;
+    transition:
+      border-color 0.4s ease,
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s ease;
+  }
+  .card-glow:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 10px 40px -12px rgba(59, 130, 246, 0.35),
+      0 0 0 1px rgba(59, 130, 246, 0.18) inset;
+  }
+
+  /* Scroll/enter reveal. */
+  .animate-fade-up {
+    animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-rise {
+    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(28px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes aurora-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(6%, -4%, 0) scale(1.12); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes aurora-drift-2 {
+  0%   { transform: translate3d(0, 0, 0) scale(1.05); }
+  50%  { transform: translate3d(-7%, 5%, 0) scale(0.95); }
+  100% { transform: translate3d(0, 0, 0) scale(1.05); }
+}
+@keyframes sheen {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora,
+  .animate-fade-up,
+  .animate-rise {
+    animation: none !important;
+  }
 }
 
 ::selection {
   background: oklch(0.62 0.19 256 / 0.35);
+}
+
+/* Smooth color/border transitions on interactive surfaces only (kept off
+   opacity/transform so base-ui's own enter/exit animations stay intact). */
+a,
+button,
+.card-glow,
+[data-slot="button"] {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
