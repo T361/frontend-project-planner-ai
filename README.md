@@ -4,9 +4,9 @@
 
 Type a brief like _"build a cloud console for managing Kubernetes workloads"_ → get a route-level plan. Click any page → it lazily expands into the **atoms, molecules, organisms, hooks, contexts, data shape, mock data, assets and libraries** that page actually needs. Edit, accept, reject, or regenerate any node. Export a Markdown spec, a JSON plan, or a paste-ready scaffolding prompt for Claude Code / Cursor.
 
-- **Live app:** `<VERCEL_URL — set after deploy>`
+- **Live app:** https://frontend-project-planner-ai.vercel.app
 - **Repo:** https://github.com/T361/frontend-project-planner-ai
-- **Sample plan:** `/share/sample` · [docs/SAMPLE_PLAN.md](docs/SAMPLE_PLAN.md)
+- **Sample plan:** https://frontend-project-planner-ai.vercel.app/share/sample · [docs/SAMPLE_PLAN.md](docs/SAMPLE_PLAN.md)
 
 ---
 
